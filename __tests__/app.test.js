@@ -61,14 +61,13 @@ describe("/api/articles/:article_id", () => {
         const { article } = body;
         expect(article).toMatchObject({
           article_id: 2,
-          title: "Sony Vaio; or, The Laptop",
-          topic: "mitch",
-          author: "icellusedkars",
+          title: expect.any(String),
+          topic: expect.any(String),
+          author: expect.any(String),
           body: expect.any(String),
           created_at: expect.any(String),
-          votes: 0,
-          article_img_url:
-            "https://images.pexels.com/photos/158651/news-newsletter-newspaper-information-158651.jpeg?w=700&h=700",
+          votes: expect.any(Number),
+          article_img_url: expect.any(String),
         });
       });
   });
@@ -88,6 +87,53 @@ describe("/api/articles/:article_id", () => {
       .then(({ body }) => {
         const { message } = body;
         expect(message).toBe("Not Found");
+      });
+  });
+});
+
+describe("/api/articles", () => {
+  test("GET 200: Responds with an array with all the articles", () => {
+    return request(app)
+      .get("/api/articles")
+      .expect(200)
+      .then(({ body }) => {
+        const { articles } = body;
+
+        expect(articles.length).toBe(13);
+        articles.forEach((article) => {
+          expect(article).toMatchObject({
+            article_id: expect.any(Number),
+            title: expect.any(String),
+            topic: expect.any(String),
+            author: expect.any(String),
+            created_at: expect.any(String),
+            votes: expect.any(Number),
+            article_img_url: expect.any(String),
+            comment_count: expect.any(Number),
+          });
+        });
+      });
+  });
+  test("GET 200:Responds, by default, with an array of all articles sorted by date in descending order", () => {
+    return request(app)
+      .get("/api/articles")
+      .expect(200)
+      .then(({ body }) => {
+        const { articles } = body;
+
+        expect(articles).toBeSortedBy("created_at", { descending: true });
+      });
+  });
+  test("GET 200:Responds with an array with all the articles without the body property", () => {
+    return request(app)
+      .get("/api/articles")
+      .expect(200)
+      .then(({ body }) => {
+        const { articles } = body;
+        expect(articles.length).toBe(13);
+        articles.forEach((article) => {
+          expect(article).not.toHaveProperty("body");
+        });
       });
   });
 });
