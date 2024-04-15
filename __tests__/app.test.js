@@ -58,7 +58,6 @@ describe("/api/articles/:article_id", () => {
       .get("/api/articles/2")
       .expect(200)
       .then(({ body }) => {
-        console.log(body);
         const { article } = body;
         expect(article).toMatchObject({
           article_id: 2,
@@ -79,7 +78,6 @@ describe("/api/articles/:article_id", () => {
       .expect(400)
       .then(({ body }) => {
         const { message } = body;
-        console.log(message);
         expect(message).toBe("Bad Request");
       });
   });
