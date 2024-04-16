@@ -1,6 +1,6 @@
 const db = require("../db/connection");
 
-exports.insertCommentsByArticleID = (article_id) => {
+exports.fetchCommentsByArticleID = (article_id) => {
   return db
     .query(
       `

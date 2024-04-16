@@ -1,6 +1,6 @@
 const db = require("../db/connection");
 
-exports.insertArticleById = (article_id) => {
+exports.fetchArticleById = (article_id) => {
   return db
     .query(`SELECT * FROM articles WHERE articles.article_id = $1;`, [
       article_id,
@@ -13,7 +13,7 @@ exports.insertArticleById = (article_id) => {
     });
 };
 
-exports.insertArticles = () => {
+exports.fetchArticles = () => {
   return db
     .query(
       `

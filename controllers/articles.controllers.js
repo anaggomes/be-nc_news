@@ -1,12 +1,12 @@
 const {
-  insertArticleById,
-  insertArticles,
+  fetchArticleById,
+  fetchArticles,
 } = require("../models/articles.models");
 
 exports.getArticleById = (req, res, next) => {
   const { article_id } = req.params;
 
-  insertArticleById(article_id)
+  fetchArticleById(article_id)
     .then((article) => {
       res.status(200).send({ article });
     })
@@ -14,7 +14,7 @@ exports.getArticleById = (req, res, next) => {
 };
 
 exports.getArticles = (req, res, next) => {
-  insertArticles()
+  fetchArticles()
     .then((articles) => {
       res.status(200).send({ articles });
     })

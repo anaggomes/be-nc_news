@@ -1,11 +1,11 @@
 const { checkArticleExists } = require("../models/articles.models");
-const { insertCommentsByArticleID } = require("../models/comments.models");
+const { fetchCommentsByArticleID } = require("../models/comments.models");
 
 exports.getCommentsByArticleId = (req, res, next) => {
   const { article_id } = req.params;
 
   Promise.all([
-    insertCommentsByArticleID(article_id),
+    fetchCommentsByArticleID(article_id),
     checkArticleExists(article_id),
   ])
 
