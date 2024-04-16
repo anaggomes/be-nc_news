@@ -396,3 +396,27 @@ describe("/api/articles/:article_id/comments", () => {
       });
   });
 });
+
+describe("/api/comments/:comment_id", () => {
+  test("DELETE 204: Deletes the corresponding comment_id", () => {
+    return request(app).delete("/api/comments/3").expect(204);
+  });
+  test("DELETE 404: Responds with an error when comment_id does not exist in the database", () => {
+    return request(app)
+      .delete("/api/comments/200")
+      .expect(404)
+      .then(({ body }) => {
+        const { message } = body;
+        expect(message).toBe("Not Found");
+      });
+  });
+  test("DELETE 404: Responds with an error when comment_id is of invalid datatype", () => {
+    return request(app)
+      .delete("/api/comments/two")
+      .expect(400)
+      .then(({ body }) => {
+        const { message } = body;
+        expect(message).toBe("Bad Request");
+      });
+  });
+});
