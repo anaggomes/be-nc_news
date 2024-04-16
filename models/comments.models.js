@@ -11,3 +11,18 @@ exports.fetchCommentsByArticleID = (article_id) => {
       return comments;
     });
 };
+
+exports.insertCommentByArticleId = (article_id, username, body) => {
+  return db
+    .query(
+      `
+      INSERT INTO comments (body, author, article_id) VALUES ($1, $2, $3) RETURNING *;`,
+      [body, username, article_id]
+    )
+    .then(({ rows: comment }) => {
+      if (comment.length === 0) {
+        return Promise.reject({ status: 404, message: "Not Found" });
+      }
+      return comment[0];
+    });
+};

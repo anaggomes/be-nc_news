@@ -47,13 +47,33 @@
     "description": "serves an array of all comments for a specific article sorted by date in descending order",
     "queries": [],
     "exampleResponse": {
-      "article": {
+      "comments": [
+        {
+          "comment_id": 2,
+          "votes": 0,
+          "created_at": "2020-10-16T05:03:00.000Z",
+          "author": "icellusedkars",
+          "body": "Text from the article..",
+          "article_id": 5
+        }
+      ]
+    }
+  },
+  "POST /api/articles/:article_id/comments": {
+    "description": "inserts a comment to a specific article into the comments table and serves the new comment with the added default properties",
+    "queries": [],
+    "exampleRequestBody": {
+      "username": "rogersop",
+      "body": "Text from the comment.."
+    },
+    "exampleResponse": {
+      "comment": {
         "comment_id": 2,
-        "votes": 0,
-        "created_at": "2020-10-16T05:03:00.000Z",
         "author": "icellusedkars",
         "body": "Text from the article..",
-        "article_id": 5
+        "article_id": 5,
+        "votes": 0,
+        "created_at": "2020-10-16T05:03:00.000Z"
       }
     }
   }
