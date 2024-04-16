@@ -195,4 +195,108 @@ describe("/api/articles/:article_id/comments", () => {
         expect(message).toBe("Bad Request");
       });
   });
+  test("POST 201: Responds with the comment added to the corresponding article", () => {
+    const requestBody = {
+      username: "rogersop",
+      body: "Text from the comment..",
+    };
+    return request(app)
+      .post("/api/articles/2/comments")
+      .send(requestBody)
+      .expect(201)
+      .then(({ body }) => {
+        const { comment } = body;
+        expect(comment).toMatchObject({
+          comment_id: expect.any(Number),
+          author: "rogersop",
+          body: "Text from the comment..",
+          article_id: 2,
+          votes: 0,
+          created_at: expect.any(String),
+        });
+      });
+  });
+  test("POST 400: Responds with an error if the article_id does not exist in the database", () => {
+    const requestBody = {
+      username: "rogersop",
+      body: "Text from the comment..",
+    };
+    return request(app)
+      .post("/api/articles/15/comments")
+      .send(requestBody)
+      .expect(400)
+      .then(({ body }) => {
+        const { message } = body;
+        expect(message).toBe("Bad Request");
+      });
+  });
+  test("POST 400: Responds with an error if the username does not exist in the database", () => {
+    const requestBody = {
+      username: "anyothername",
+      body: "Text from the comment..",
+    };
+    return request(app)
+      .post("/api/articles/15/comments")
+      .send(requestBody)
+      .expect(400)
+      .then(({ body }) => {
+        const { message } = body;
+        expect(message).toBe("Bad Request");
+      });
+  });
+  test("POST 400: Responds with an error when requested article_id is of incorrect datatype", () => {
+    const requestBody = {
+      name: "rogersop",
+      body: "Text from the comment..",
+    };
+    return request(app)
+      .post("/api/articles/fifteen/comments")
+      .send(requestBody)
+      .expect(400)
+      .then(({ body }) => {
+        const { message } = body;
+        expect(message).toBe("Bad Request");
+      });
+  });
+  test("POST 400: Responds with an error if the posted comment does not have the correct property names", () => {
+    const requestBody = {
+      name: "rogersop",
+      body: "Text from the comment..",
+    };
+    return request(app)
+      .post("/api/articles/15/comments")
+      .send(requestBody)
+      .expect(400)
+      .then(({ body }) => {
+        const { message } = body;
+        expect(message).toBe("Bad Request");
+      });
+  });
+  test("POST 400: Responds with an error if the posted comment does not have all properties required", () => {
+    const requestBody = {
+      name: "rogersop",
+    };
+    return request(app)
+      .post("/api/articles/15/comments")
+      .send(requestBody)
+      .expect(400)
+      .then(({ body }) => {
+        const { message } = body;
+        expect(message).toBe("Bad Request");
+      });
+  });
+  test("POST 400: Responds with an error if the posted comment properties are not of the correct type", () => {
+    const requestBody = {
+      name: "rogersop",
+      body: 999,
+    };
+    return request(app)
+      .post("/api/articles/15/comments")
+      .send(requestBody)
+      .expect(400)
+      .then(({ body }) => {
+        const { message } = body;
+        expect(message).toBe("Bad Request");
+      });
+  });
 });
