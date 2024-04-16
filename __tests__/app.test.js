@@ -89,6 +89,102 @@ describe("/api/articles/:article_id", () => {
         expect(message).toBe("Not Found");
       });
   });
+  test("PATCH 200: Increases the number of votes for the corresponding article, when requestBody has votes property >0. Responds with the updated article.", () => {
+    const requestBody = {
+      inc_votes: 5,
+    };
+    return request(app)
+      .patch("/api/articles/1")
+      .send(requestBody)
+      .expect(200)
+      .then(({ body }) => {
+        const { article } = body;
+        expect(article).toMatchObject({
+          article_id: 1,
+          title: expect.any(String),
+          topic: expect.any(String),
+          author: expect.any(String),
+          body: expect.any(String),
+          created_at: expect.any(String),
+          votes: 105,
+          article_img_url: expect.any(String),
+        });
+      });
+  });
+  test("PATCH 200: Decreases the number of votes for the corresponding article, when requestBody has votes property < 0. Responds with the updated article.", () => {
+    const requestBody = {
+      inc_votes: -10,
+    };
+    return request(app)
+      .patch("/api/articles/2")
+      .send(requestBody)
+      .expect(200)
+      .then(({ body }) => {
+        const { article } = body;
+        expect(article).toMatchObject({
+          article_id: 2,
+          title: expect.any(String),
+          topic: expect.any(String),
+          author: expect.any(String),
+          body: expect.any(String),
+          created_at: expect.any(String),
+          votes: -10,
+          article_img_url: expect.any(String),
+        });
+      });
+  });
+  test("PATCH 404: Responds with an error when article_id is does not exist in the database", () => {
+    const requestBody = {
+      inc_votes: 5,
+    };
+    return request(app)
+      .patch("/api/articles/15")
+      .send(requestBody)
+      .expect(404)
+      .then(({ body }) => {
+        const { message } = body;
+        expect(message).toBe("Not Found");
+      });
+  });
+  test("PATCH 400: Responds with an error when article_id is is of incorrect datatype", () => {
+    const requestBody = {
+      inc_votes: 5,
+    };
+    return request(app)
+      .patch("/api/articles/fifteen")
+      .send(requestBody)
+      .expect(400)
+      .then(({ body }) => {
+        const { message } = body;
+        expect(message).toBe("Bad Request");
+      });
+  });
+  test("PATCH 400: Responds with an error when requestBody votes property is is of incorrect datatype", () => {
+    const requestBody = {
+      inc_votes: "five",
+    };
+    return request(app)
+      .patch("/api/articles/1")
+      .send(requestBody)
+      .expect(400)
+      .then(({ body }) => {
+        const { message } = body;
+        expect(message).toBe("Bad Request");
+      });
+  });
+  test("PATCH 400: Responds with an error when requestBody does not have the correct property name", () => {
+    const requestBody = {
+      add_votes: 5,
+    };
+    return request(app)
+      .patch("/api/articles/1")
+      .send(requestBody)
+      .expect(400)
+      .then(({ body }) => {
+        const { message } = body;
+        expect(message).toBe("Bad Request");
+      });
+  });
 });
 
 describe("/api/articles", () => {
