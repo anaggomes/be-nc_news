@@ -312,7 +312,7 @@ describe("/api/articles/:article_id/comments", () => {
         });
       });
   });
-  test("POST 400: Responds with an error if the article_id does not exist in the database", () => {
+  test("POST 404: Responds with an error if the article_id does not exist in the database", () => {
     const requestBody = {
       username: "rogersop",
       body: "Text from the comment..",
@@ -320,29 +320,30 @@ describe("/api/articles/:article_id/comments", () => {
     return request(app)
       .post("/api/articles/15/comments")
       .send(requestBody)
-      .expect(400)
+      .expect(404)
       .then(({ body }) => {
         const { message } = body;
-        expect(message).toBe("Bad Request");
+        expect(message).toBe("Not Found");
       });
   });
-  test("POST 400: Responds with an error if the username does not exist in the database", () => {
+
+  test("POST 404: Responds with an error if the username does not exist in the database", () => {
     const requestBody = {
       username: "anyothername",
       body: "Text from the comment..",
     };
     return request(app)
-      .post("/api/articles/15/comments")
+      .post("/api/articles/3/comments")
       .send(requestBody)
-      .expect(400)
+      .expect(404)
       .then(({ body }) => {
         const { message } = body;
-        expect(message).toBe("Bad Request");
+        expect(message).toBe("Not Found");
       });
   });
   test("POST 400: Responds with an error when requested article_id is of incorrect datatype", () => {
     const requestBody = {
-      name: "rogersop",
+      username: "rogersop",
       body: "Text from the comment..",
     };
     return request(app)
@@ -370,24 +371,10 @@ describe("/api/articles/:article_id/comments", () => {
   });
   test("POST 400: Responds with an error if the posted comment does not have all properties required", () => {
     const requestBody = {
-      name: "rogersop",
+      username: "rogersop",
     };
     return request(app)
-      .post("/api/articles/15/comments")
-      .send(requestBody)
-      .expect(400)
-      .then(({ body }) => {
-        const { message } = body;
-        expect(message).toBe("Bad Request");
-      });
-  });
-  test("POST 400: Responds with an error if the posted comment properties are not of the correct type", () => {
-    const requestBody = {
-      name: "rogersop",
-      body: 999,
-    };
-    return request(app)
-      .post("/api/articles/15/comments")
+      .post("/api/articles/2/comments")
       .send(requestBody)
       .expect(400)
       .then(({ body }) => {

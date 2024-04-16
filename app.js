@@ -4,6 +4,7 @@ const {
   handleServerError,
   handleCustomerError,
   handlePsqlError,
+  handlePsqlNotFoundError,
 } = require("./errors/errors");
 const {
   getArticleById,
@@ -42,7 +43,7 @@ app.get("/api/users", getAllUsers);
 app.all("*", (req, res, next) => {
   res.status(404).send({ message: "Path Not Found" });
 });
-
+app.use(handlePsqlNotFoundError);
 app.use(handlePsqlError);
 app.use(handleCustomerError);
 app.use(handleServerError);
