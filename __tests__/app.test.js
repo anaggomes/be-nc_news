@@ -19,7 +19,7 @@ describe("/api/topics", () => {
       .expect(200)
       .then(({ body }) => {
         const { topics } = body;
-        expect(topics.length).toBe(3);
+        expect(topics).toHaveLength(3);
         topics.forEach((topic) => {
           expect(typeof topic.description).toBe("string");
           expect(typeof topic.slug).toBe("string");
@@ -99,7 +99,7 @@ describe("/api/articles", () => {
       .then(({ body }) => {
         const { articles } = body;
 
-        expect(articles.length).toBe(13);
+        expect(articles).toHaveLength(13);
         articles.forEach((article) => {
           expect(article).toMatchObject({
             article_id: expect.any(Number),
@@ -130,7 +130,7 @@ describe("/api/articles", () => {
       .expect(200)
       .then(({ body }) => {
         const { articles } = body;
-        expect(articles.length).toBe(13);
+        expect(articles).toHaveLength(13);
         articles.forEach((article) => {
           expect(article).not.toHaveProperty("body");
         });
@@ -145,7 +145,7 @@ describe("/api/articles/:article_id/comments", () => {
       .expect(200)
       .then(({ body }) => {
         const { comments } = body;
-        expect(comments.length).toBe(2);
+        expect(comments).toHaveLength(2);
         comments.forEach((comment) => {
           expect(comment).toMatchObject({
             comment_id: expect.any(Number),
@@ -174,7 +174,7 @@ describe("/api/articles/:article_id/comments", () => {
       .expect(200)
       .then(({ body }) => {
         const { comments } = body;
-        expect(comments.length).toBe(0);
+        expect(comments).toHaveLength(0);
       });
   });
   test("GET 404: Responds with an error when requested article_id does not exist in the database", () => {
@@ -196,10 +196,3 @@ describe("/api/articles/:article_id/comments", () => {
       });
   });
 });
-
-//get all comments for an article length + properties
-//sorted by most most recent
-
-//if article has no comments, returns empty array
-//if article doesnt exist, return 404 not found
-//if incorrect entry, return 400 bad request
