@@ -232,6 +232,45 @@ describe("/api/articles", () => {
         });
       });
   });
+  test("GET 200: Responds with an array of the articles filtered by the query value", () => {
+    return request(app)
+      .get("/api/articles?topic=mitch")
+      .expect(200)
+      .then(({ body }) => {
+        const { articles } = body;
+        expect(articles).toHaveLength(12);
+        articles.forEach((article) => {
+          expect(article.topic).toBe("mitch");
+        });
+      });
+  });
+  test("GET 200: Responds with an empty array if the query value is valid but there are no results in the database", () => {
+    return request(app)
+      .get("/api/articles?topic=paper")
+      .expect(200)
+      .then(({ body }) => {
+        const { articles } = body;
+        expect(articles).toHaveLength(0);
+      });
+  });
+  test("GET 404: Responds with an error if query value does not exist in the database", () => {
+    return request(app)
+      .get("/api/articles?topic=dogs")
+      .expect(404)
+      .then(({ body }) => {
+        const { message } = body;
+        expect(message).toBe("Not Found");
+      });
+  });
+  test("GET 404: Responds with an error if query refers to a column that is not valid/does not exist", () => {
+    return request(app)
+      .get("/api/articles?subject=cats")
+      .expect(404)
+      .then(({ body }) => {
+        const { message } = body;
+        expect(message).toBe("Not Found");
+      });
+  });
 });
 
 describe("/api/articles/:article_id/comments", () => {
