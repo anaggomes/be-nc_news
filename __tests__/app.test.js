@@ -71,6 +71,15 @@ describe("/api/articles/:article_id", () => {
         });
       });
   });
+  test("GET 200: The article returned has property of comment_count", () => {
+    return request(app)
+      .get("/api/articles/2")
+      .expect(200)
+      .then(({ body }) => {
+        const { article } = body;
+        expect(article).toHaveProperty("comment_count", expect.any(Number));
+      });
+  });
   test("GET 400: Responds with an error when requested id is of incorrect datatype", () => {
     return request(app)
       .get("/api/articles/not-an-article")
