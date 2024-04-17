@@ -1,9 +1,11 @@
+const articles = require("../db/data/test-data/articles");
 const {
   fetchArticleById,
   fetchArticles,
   updateArticleByIdVotes,
   checkArticleExists,
 } = require("../models/articles.models");
+const { checkTopicExists } = require("../models/topics.models");
 
 exports.getArticleById = (req, res, next) => {
   const { article_id } = req.params;
@@ -16,7 +18,15 @@ exports.getArticleById = (req, res, next) => {
 };
 
 exports.getArticles = (req, res, next) => {
-  fetchArticles()
+  const queries = Object.keys(req.query);
+
+  if (queries.length && !queries.includes("topic")) {
+    return res.status(404).send({ message: "Not Found" });
+  }
+
+  const { topic } = req.query;
+
+  return fetchArticles(topic)
     .then((articles) => {
       res.status(200).send({ articles });
     })

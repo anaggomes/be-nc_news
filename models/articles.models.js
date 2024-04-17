@@ -1,4 +1,5 @@
 const db = require("../db/connection");
+const { checkTopicExists } = require("./topics.models");
 
 exports.fetchArticleById = (article_id) => {
   return db
@@ -13,13 +14,25 @@ exports.fetchArticleById = (article_id) => {
     });
 };
 
-exports.fetchArticles = () => {
+exports.fetchArticles = (topic) => {
+  let psqlString = `
+  SELECT articles.article_id, articles.title, articles.topic, articles.author, articles.created_at, articles.votes, articles.article_img_url, CAST(COUNT(comments.article_id) AS INT) AS comment_count FROM articles 
+  LEFT JOIN comments ON articles.article_id = comments.article_id `;
+
+  const query = [];
+
+  if (topic) {
+    psqlString += `WHERE topic = $1 `;
+    query.push(topic);
+  }
+
+  psqlString += `GROUP BY articles.article_id ORDER BY articles.created_at DESC;`;
+
   return db
-    .query(
-      `
-  SELECT articles.article_id, articles.title, articles.topic, articles.author, articles.created_at, articles.votes, articles.article_img_url, CAST(COUNT(comments.article_id) AS INT) AS comment_count FROM articles LEFT JOIN comments ON articles.article_id = comments.article_id GROUP BY articles.article_id ORDER BY articles.created_at DESC;`
-    )
+    .query(psqlString, query)
+
     .then(({ rows: articles }) => {
+      if (!articles.length) return checkTopicExists(topic);
       return articles;
     });
 };
