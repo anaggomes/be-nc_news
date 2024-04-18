@@ -1,5 +1,5 @@
 const db = require("../db/connection");
-const { checkTopicExists } = require("./topics.models");
+const { checkExists } = require("./utils.models");
 
 exports.fetchArticleById = (article_id) => {
   return db
@@ -15,7 +15,21 @@ exports.fetchArticleById = (article_id) => {
     });
 };
 
-exports.fetchArticles = (topic) => {
+exports.fetchArticles = (topic, sort_by = "created_at", order_by = "desc") => {
+  const validOrderBys = ["asc", "desc"];
+  const validSortBys = [
+    "article_id",
+    "title",
+    "topic",
+    "author",
+    "created_at",
+    "votes",
+    "article_img_url",
+  ];
+  if (!validSortBys.includes(sort_by) || !validOrderBys.includes(order_by)) {
+    return Promise.reject({ status: 400, message: "Bad Request" });
+  }
+
   let psqlString = `
   SELECT articles.article_id, articles.title, articles.topic, articles.author, articles.created_at, articles.votes, articles.article_img_url, CAST(COUNT(comments.article_id) AS INT) AS comment_count FROM articles 
   LEFT JOIN comments ON articles.article_id = comments.article_id `;
@@ -27,13 +41,15 @@ exports.fetchArticles = (topic) => {
     query.push(topic);
   }
 
-  psqlString += `GROUP BY articles.article_id ORDER BY articles.created_at DESC;`;
+  psqlString += `GROUP BY articles.article_id ORDER BY articles.${sort_by} ${order_by};`;
 
   return db
     .query(psqlString, query)
 
     .then(({ rows: articles }) => {
-      if (!articles.length) return checkTopicExists(topic);
+      if (topic && !articles.length)
+        return checkExists("topics", "slug", topic);
+
       return articles;
     });
 };

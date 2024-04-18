@@ -19,14 +19,17 @@ exports.getArticleById = (req, res, next) => {
 
 exports.getArticles = (req, res, next) => {
   const queries = Object.keys(req.query);
+  const validQueries = ["sort_by", "order_by", "topic"];
 
-  if (queries.length && !queries.includes("topic")) {
-    return res.status(404).send({ message: "Not Found" });
-  }
+  queries.forEach((query) => {
+    if (queries.length && !validQueries.includes(query)) {
+      return res.status(400).send({ message: "Bad Request" });
+    }
+  });
 
-  const { topic } = req.query;
+  const { topic, sort_by, order_by } = req.query;
 
-  return fetchArticles(topic)
+  return fetchArticles(topic, sort_by, order_by)
     .then((articles) => {
       res.status(200).send({ articles });
     })
