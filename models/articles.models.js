@@ -1,4 +1,5 @@
 const db = require("../db/connection");
+const articles = require("../db/data/test-data/articles");
 const { checkExists } = require("./all.models");
 
 exports.fetchArticleById = (article_id) => {
@@ -77,4 +78,30 @@ exports.updateArticleByIdVotes = (article_id, inc_votes) => {
     .then(({ rows: article }) => {
       return article[0];
     });
+};
+
+exports.insertArticle = (author, title, body, topic, article_img_url) => {
+  const values = [author, title, body, topic];
+
+  let psqlString = `INSERT INTO articles (author, title, body, topic`;
+
+  let url = "";
+  if (article_img_url) {
+    psqlString += `, article_img_url`;
+    url = article_img_url;
+    values.push(url);
+  }
+  psqlString += `) VALUES ($1, $2, $3, $4`;
+
+  if (article_img_url) {
+    psqlString += `, $5`;
+  }
+  psqlString += `) RETURNING *;`;
+
+  return db.query(psqlString, values).then(({ rows: newArticle }) => {
+    if (newArticle.length === 0) {
+      return Promise.reject({ status: 404, message: "Not Found" });
+    }
+    return newArticle[0];
+  });
 };

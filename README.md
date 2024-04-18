@@ -76,6 +76,7 @@ Before running the server, make sure you have the following installed on your ma
 #### /api/articles
 
 - GET - Get all articles. Accepts queries: "author", "topic", "sort_by", "order"
+- POST - Inserts a new article
 
 #### api/articles/:article_id
 
@@ -85,7 +86,7 @@ Before running the server, make sure you have the following installed on your ma
 #### /api/articles/:article_id/comments
 
 - GET - Get all comments for an article.
-- POST - Add a new comment to an article
+- POST - Inserts a new comment to an article
 
 #### /api/comments/:comment_id
 

@@ -4,6 +4,7 @@ const {
   fetchArticles,
   updateArticleByIdVotes,
   checkArticleExists,
+  insertArticle,
 } = require("../models/articles.models");
 const { checkTopicExists } = require("../models/topics.models");
 
@@ -46,6 +47,20 @@ exports.patchArticleByIdVotes = (req, res, next) => {
   ])
     .then(([article]) => {
       res.status(200).send({ article });
+    })
+    .catch(next);
+};
+
+exports.postArticle = (req, res, next) => {
+  const { author, title, body, topic, article_img_url } = req.body;
+
+  insertArticle(author, title, body, topic, article_img_url)
+    .then((newArticle) => {
+      const newArticleId = newArticle.article_id;
+      return fetchArticleById(newArticleId);
+    })
+    .then((article) => {
+      res.status(201).send({ article });
     })
     .catch(next);
 };

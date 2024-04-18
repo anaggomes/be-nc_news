@@ -365,6 +365,115 @@ describe("/api/articles", () => {
         expect(message).toBe("Bad Request");
       });
   });
+
+  test("POST 201: Responds with the added article with the default url ", () => {
+    const requestBody = {
+      author: "icellusedkars",
+      title: "Text from title...",
+      body: "Text from body...",
+      topic: "cats",
+    };
+    return request(app)
+      .post("/api/articles")
+      .send(requestBody)
+      .expect(201)
+      .then(({ body }) => {
+        const { article } = body;
+        expect(article).toMatchObject({
+          article_id: expect.any(Number),
+          title: "Text from title...",
+          topic: "cats",
+          author: "icellusedkars",
+          body: "Text from body...",
+          created_at: expect.any(String),
+          votes: expect.any(Number),
+          article_img_url:
+            "https://images.pexels.com/photos/97050/pexels-photo-97050.jpeg?w=700&h=700",
+          comment_count: expect.any(Number),
+        });
+      });
+  });
+  test("POST 201: Responds with the added article with the provided url", () => {
+    const requestBody = {
+      author: "icellusedkars",
+      title: "Text from title...",
+      body: "Text from body...",
+      topic: "cats",
+      article_img_url: "url",
+    };
+    return request(app)
+      .post("/api/articles")
+      .send(requestBody)
+      .expect(201)
+      .then(({ body }) => {
+        const { article } = body;
+        expect(article).toHaveProperty("article_img_url", "url");
+      });
+  });
+  test("POST 404: Responds with an error if the author does not exist in the database", () => {
+    const requestBody = {
+      author: "anyName",
+      title: "Text from title...",
+      body: "Text from body...",
+      topic: "cats",
+    };
+    return request(app)
+      .post("/api/articles")
+      .send(requestBody)
+      .expect(404)
+      .then(({ body }) => {
+        const { message } = body;
+        expect(message).toBe("Not Found");
+      });
+  });
+  test("POST 404: Responds with an error if the topic does not exist in the database", () => {
+    const requestBody = {
+      author: "icellusedkars",
+      title: "Text from title...",
+      body: "Text from body...",
+      topic: "dogs",
+    };
+    return request(app)
+      .post("/api/articles")
+      .send(requestBody)
+      .expect(404)
+      .then(({ body }) => {
+        const { message } = body;
+        expect(message).toBe("Not Found");
+      });
+  });
+
+  test("POST 400: Responds with an error if the posted comment does not have the correct property names", () => {
+    const requestBody = {
+      author: "icellusedkars",
+      title: "Text from title...",
+      comment: "Text from body...",
+      topic: "cats",
+    };
+    return request(app)
+      .post("/api/articles")
+      .send(requestBody)
+      .expect(400)
+      .then(({ body }) => {
+        const { message } = body;
+        expect(message).toBe("Bad Request");
+      });
+  });
+  test("POST 400: Responds with an error if the posted comment does not have all properties required", () => {
+    const requestBody = {
+      author: "icellusedkars",
+      title: "Text from title...",
+      comment: "Text from body...",
+    };
+    return request(app)
+      .post("/api/articles")
+      .send(requestBody)
+      .expect(400)
+      .then(({ body }) => {
+        const { message } = body;
+        expect(message).toBe("Bad Request");
+      });
+  });
 });
 
 describe("/api/articles/:article_id/comments", () => {
