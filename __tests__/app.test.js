@@ -271,13 +271,98 @@ describe("/api/articles", () => {
         expect(message).toBe("Not Found");
       });
   });
-  test("GET 404: Responds with an error if query refers to a column that is not valid/does not exist", () => {
+  test("GET 400: Responds with an error if query refers to a column that is not valid/does not exist", () => {
     return request(app)
       .get("/api/articles?subject=cats")
-      .expect(404)
+      .expect(400)
       .then(({ body }) => {
         const { message } = body;
-        expect(message).toBe("Not Found");
+        expect(message).toBe("Bad Request");
+      });
+  });
+  test("GET 200: Responds, by default, with an array of the articles sorted by created_at in descending order", () => {
+    return request(app)
+      .get("/api/articles")
+      .expect(200)
+      .then(({ body }) => {
+        const { articles } = body;
+        expect(articles).toBeSortedBy("created_at", { descending: true });
+      });
+  });
+  test("GET 200: Responds with an array of the articles sorted by a valid column name in the default order", () => {
+    return request(app)
+      .get("/api/articles?sort_by=author")
+      .expect(200)
+      .then(({ body }) => {
+        const { articles } = body;
+        expect(articles).toBeSortedBy("author", { descending: true });
+      });
+  });
+  test("GET 200: Responds with an array of the articles in ascending order, sorted by created_at by default", () => {
+    return request(app)
+      .get("/api/articles?order_by=asc")
+      .expect(200)
+      .then(({ body }) => {
+        const { articles } = body;
+        expect(articles).toBeSortedBy("created_at");
+      });
+  });
+  test("GET 200: Responds with an array of the articles sorted by a valid column name in ascending order.", () => {
+    return request(app)
+      .get("/api/articles?sort_by=topic&order_by=asc")
+      .expect(200)
+      .then(({ body }) => {
+        const { articles } = body;
+        expect(articles).toBeSortedBy("topic");
+      });
+  });
+  test("GET 200: Responds with an array of the articles filtered by the query value and sorted by a valid column name.", () => {
+    return request(app)
+      .get("/api/articles?topic=mitch&sort_by=votes")
+      .expect(200)
+      .then(({ body }) => {
+        const { articles } = body;
+        articles.forEach((article) => {
+          expect(article.topic).toBe("mitch");
+        });
+        expect(articles).toBeSortedBy("topic");
+      });
+  });
+
+  test("GET 400: Responds with an error if sort_by query refers to a column name that does not exist", () => {
+    return request(app)
+      .get("/api/articles?sort_by=subject")
+      .expect(400)
+      .then(({ body }) => {
+        const { message } = body;
+        expect(message).toBe("Bad Request");
+      });
+  });
+  test("GET 400: Responds with an error if order_by query refers to a value that is not valid", () => {
+    return request(app)
+      .get("/api/articles?order_by=highest")
+      .expect(400)
+      .then(({ body }) => {
+        const { message } = body;
+        expect(message).toBe("Bad Request");
+      });
+  });
+  test("GET 400: Responds with an error if any of the query values is not valid", () => {
+    return request(app)
+      .get("/api/articles?order_by=highest&sort_by=author")
+      .expect(400)
+      .then(({ body }) => {
+        const { message } = body;
+        expect(message).toBe("Bad Request");
+      });
+  });
+  test("GET 400: Responds with an error if the query names are not valid", () => {
+    return request(app)
+      .get("/api/articles?ordered=asc&sorted=topic")
+      .expect(400)
+      .then(({ body }) => {
+        const { message } = body;
+        expect(message).toBe("Bad Request");
       });
   });
 });
