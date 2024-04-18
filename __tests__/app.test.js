@@ -262,24 +262,7 @@ describe("/api/articles", () => {
         expect(articles).toHaveLength(0);
       });
   });
-  test("GET 404: Responds with an error if query value does not exist in the database", () => {
-    return request(app)
-      .get("/api/articles?topic=dogs")
-      .expect(404)
-      .then(({ body }) => {
-        const { message } = body;
-        expect(message).toBe("Not Found");
-      });
-  });
-  test("GET 400: Responds with an error if query refers to a column that is not valid/does not exist", () => {
-    return request(app)
-      .get("/api/articles?subject=cats")
-      .expect(400)
-      .then(({ body }) => {
-        const { message } = body;
-        expect(message).toBe("Bad Request");
-      });
-  });
+
   test("GET 200: Responds, by default, with an array of the articles sorted by created_at in descending order", () => {
     return request(app)
       .get("/api/articles")
@@ -328,7 +311,24 @@ describe("/api/articles", () => {
         expect(articles).toBeSortedBy("topic");
       });
   });
-
+  test("GET 404: Responds with an error if query value does not exist in the database", () => {
+    return request(app)
+      .get("/api/articles?topic=dogs")
+      .expect(404)
+      .then(({ body }) => {
+        const { message } = body;
+        expect(message).toBe("Not Found");
+      });
+  });
+  test("GET 400: Responds with an error if query refers to a column that is not valid/does not exist", () => {
+    return request(app)
+      .get("/api/articles?subject=cats")
+      .expect(400)
+      .then(({ body }) => {
+        const { message } = body;
+        expect(message).toBe("Bad Request");
+      });
+  });
   test("GET 400: Responds with an error if sort_by query refers to a column name that does not exist", () => {
     return request(app)
       .get("/api/articles?sort_by=subject")
@@ -540,7 +540,6 @@ describe("/api/comments/:comment_id", () => {
       });
   });
 
-  //////////// NEW TEST
   test("PATCH 200: Increases the number of votes for the corresponding comment, when requestBody has votes property >0. Responds with the updated comment.", () => {
     const requestBody = {
       inc_votes: 1,

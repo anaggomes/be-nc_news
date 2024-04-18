@@ -65,17 +65,40 @@ Before running the server, make sure you have the following installed on your ma
 
 ## Endpoints
 
-- GET /api : Get all endpoints of the api
-- GET /api/topics : Get all topics
-- GET /api/articles : Get all articles. Accepts queries: "author", "topic", "sort_by", "order"
-- GET /api/articles/:article_id : Get an article by ID
-- GET /api/articles/:article_id/comments : Get all comments for an article.
-- GET /api/users : Get all users
-- GET /api/users/:username : Get an user by username
-- POST /api/articles/:article_id/comments : Add a new comment to an article
-- PATCH /api/articles/:article_id : Updates the votes value of an article
-- DELETE /api/comments/:comment_id : Delete a comment
-- PATCH /api/comments/:comment_id : Updates the votes value of a comment
+#### /api
+
+- GET - Get all endpoints of the api
+
+#### /api/topics
+
+- GET - Get all topics
+
+#### /api/articles
+
+- GET - Get all articles. Accepts queries: "author", "topic", "sort_by", "order"
+
+#### api/articles/:article_id
+
+- GET - Get an article by ID
+- PATCH - Updates the votes value of an article
+
+#### /api/articles/:article_id/comments
+
+- GET - Get all comments for an article.
+- POST - Add a new comment to an article
+
+#### /api/comments/:comment_id
+
+- DELETE - Delete a comment
+- PATCH - Updates the votes value of a comment
+
+#### /api/users
+
+- GET - Get all users
+
+#### /api/users/:username
+
+- GET - Get an user by username
 
 For more detailed information about each endpoint, refer to the `endpoints.json` file
 
