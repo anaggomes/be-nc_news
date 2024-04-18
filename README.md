@@ -70,6 +70,8 @@ Before running the server, make sure you have the following installed on your ma
 - GET /api/articles : Get all articles. Accepts queries: "author", "topic", "sort_by", "order"
 - GET /api/articles/:article_id : Get an article by ID
 - GET /api/articles/:article_id/comments : Get all comments for an article.
+- GET /api/users : Get all users
+- GET /api/users/:username : Get an user by username
 - POST /api/articles/:article_id/comments : Add a new comment to an article
 - PATCH /api/articles/:article_id : Increment or decrement the votes of an article
 - DELETE /api/comments/:comment_id : Delete a comment
