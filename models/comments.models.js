@@ -38,3 +38,21 @@ exports.removeCommentById = (comment_id) => {
       }
     });
 };
+
+exports.updateCommentVotes = (inc_votes, comment_id) => {
+  return db
+    .query(
+      `
+  UPDATE comments
+  SET votes = votes + $1
+  WHERE comment_id = $2
+  RETURNING *;`,
+      [inc_votes, comment_id]
+    )
+    .then(({ rows: comment }) => {
+      if (!comment.length) {
+        return Promise.reject({ status: 404, message: "Not Found" });
+      }
+      return comment[0];
+    });
+};

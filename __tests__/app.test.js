@@ -539,6 +539,100 @@ describe("/api/comments/:comment_id", () => {
         expect(message).toBe("Bad Request");
       });
   });
+
+  //////////// NEW TEST
+  test("PATCH 200: Increases the number of votes for the corresponding comment, when requestBody has votes property >0. Responds with the updated comment.", () => {
+    const requestBody = {
+      inc_votes: 1,
+    };
+    return request(app)
+      .patch("/api/comments/1")
+      .send(requestBody)
+      .expect(200)
+      .then(({ body }) => {
+        const { comment } = body;
+        expect(comment).toMatchObject({
+          comment_id: 1,
+          votes: 17,
+          created_at: expect.any(String),
+          author: expect.any(String),
+          body: expect.any(String),
+          article_id: expect.any(Number),
+        });
+      });
+  });
+  test("PATCH 200: Decreases the number of votes for the corresponding comment, when requestBody has votes property < 0. Responds with the updated comment.", () => {
+    const requestBody = {
+      inc_votes: -1,
+    };
+    return request(app)
+      .patch("/api/comments/2")
+      .send(requestBody)
+      .expect(200)
+      .then(({ body }) => {
+        const { comment } = body;
+        expect(comment).toMatchObject({
+          comment_id: 2,
+          votes: 13,
+          created_at: expect.any(String),
+          author: expect.any(String),
+          body: expect.any(String),
+          article_id: expect.any(Number),
+        });
+      });
+  });
+  test("PATCH 404: Responds with an error when comment_id is does not exist in the database", () => {
+    const requestBody = {
+      inc_votes: 1,
+    };
+    return request(app)
+      .patch("/api/comments/20")
+      .send(requestBody)
+      .expect(404)
+      .then(({ body }) => {
+        const { message } = body;
+        expect(message).toBe("Not Found");
+      });
+  });
+  test("PATCH 400: Responds with an error when comment_id is is of incorrect datatype", () => {
+    const requestBody = {
+      inc_votes: 1,
+    };
+    return request(app)
+      .patch("/api/comments/fifteen")
+      .send(requestBody)
+      .expect(400)
+      .then(({ body }) => {
+        const { message } = body;
+        expect(message).toBe("Bad Request");
+      });
+  });
+  test("PATCH 400: Responds with an error when requestBody votes property is is of incorrect datatype", () => {
+    const requestBody = {
+      inc_votes: "one",
+    };
+    return request(app)
+      .patch("/api/comments/1")
+      .send(requestBody)
+      .expect(400)
+      .then(({ body }) => {
+        const { message } = body;
+        expect(message).toBe("Bad Request");
+      });
+  });
+  test("PATCH 400: Responds with an error when requestBody does not have the correct property name", () => {
+    const requestBody = {
+      add_votes: 1,
+    };
+    return request(app)
+      .patch("/api/comments/1")
+      .send(requestBody)
+      .expect(400)
+      .then(({ body }) => {
+        const { message } = body;
+        expect(message).toBe("Bad Request");
+      });
+  });
 });
 
 describe("/api/users", () => {

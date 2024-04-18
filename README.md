@@ -73,8 +73,9 @@ Before running the server, make sure you have the following installed on your ma
 - GET /api/users : Get all users
 - GET /api/users/:username : Get an user by username
 - POST /api/articles/:article_id/comments : Add a new comment to an article
-- PATCH /api/articles/:article_id : Increment or decrement the votes of an article
+- PATCH /api/articles/:article_id : Updates the votes value of an article
 - DELETE /api/comments/:comment_id : Delete a comment
+- PATCH /api/comments/:comment_id : Updates the votes value of a comment
 
 For more detailed information about each endpoint, refer to the `endpoints.json` file
 
