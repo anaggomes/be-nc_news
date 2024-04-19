@@ -366,7 +366,6 @@ describe("/api/articles", () => {
         expect(message).toBe("Bad Request");
       });
   });
-
   test("POST 201: Responds with the added article with the default url ", () => {
     const requestBody = {
       author: "icellusedkars",
@@ -647,7 +646,6 @@ describe("/api/articles/:article_id/comments", () => {
         expect(message).toBe("Not Found");
       });
   });
-
   test("POST 404: Responds with an error if the username does not exist in the database", () => {
     const requestBody = {
       username: "anyothername",
@@ -697,6 +695,88 @@ describe("/api/articles/:article_id/comments", () => {
     return request(app)
       .post("/api/articles/2/comments")
       .send(requestBody)
+      .expect(400)
+      .then(({ body }) => {
+        const { message } = body;
+        expect(message).toBe("Bad Request");
+      });
+  });
+  ///////////////////////////////////
+  test("GET 200: Responds with the first page of comments, default to 10 results, and the total number of comments", () => {
+    return request(app)
+      .get("/api/articles/1/comments")
+      .expect(200)
+      .then(({ body }) => {
+        const { comments } = body;
+        expect(comments).toHaveLength(10);
+      });
+  });
+  test("GET 200: Responds with the first page of comments containing the number of comments passed in the query", () => {
+    return request(app)
+      .get("/api/articles/1/comments?limit=5")
+      .expect(200)
+      .then(({ body }) => {
+        const { comments } = body;
+        expect(comments).toHaveLength(5);
+      });
+  });
+  test("GET 200: Responds with the second page of comments when passed the page number", () => {
+    return request(app)
+      .get("/api/articles/1/comments?p=2")
+      .expect(200)
+      .then(({ body }) => {
+        const { comments } = body;
+        expect(comments).toHaveLength(1);
+      });
+  });
+  test("GET 200: Responds with the requested page of comments when passed a page number and a limit number", () => {
+    return request(app)
+      .get("/api/articles/1/comments?p=2&limit=5")
+      .expect(200)
+      .then(({ body }) => {
+        const { comments } = body;
+        expect(comments).toHaveLength(5);
+      });
+  });
+  test("GET 200: Responds with the all the comments when limit number is higher than the number or comments for that request", () => {
+    return request(app)
+      .get("/api/articles/1/comments?limit=20")
+      .expect(200)
+      .then(({ body }) => {
+        const { comments } = body;
+        expect(comments).toHaveLength(11);
+      });
+  });
+  test("GET 404: Responds with an error when the requested page of comments does not have any results", () => {
+    return request(app)
+      .get("/api/articles/1/comments?p=3")
+      .expect(404)
+      .then(({ body }) => {
+        const { message } = body;
+        expect(message).toBe("Not Found");
+      });
+  });
+  test("GET 400: Responds with an error when the request is incomplete", () => {
+    return request(app)
+      .get("/api/articles/1/comments?limit=&p=2")
+      .expect(400)
+      .then(({ body }) => {
+        const { message } = body;
+        expect(message).toBe("Bad Request");
+      });
+  });
+  test("GET 400: Responds with an error when the request value for limit or p is of incorrect type", () => {
+    return request(app)
+      .get("/api/articles/1/comments?p=ten")
+      .expect(400)
+      .then(({ body }) => {
+        const { message } = body;
+        expect(message).toBe("Bad Request");
+      });
+  });
+  test("GET 400: Responds with an error when the query is not valid", () => {
+    return request(app)
+      .get("/api/articles/1/comments?page=2")
       .expect(400)
       .then(({ body }) => {
         const { message } = body;
