@@ -784,7 +784,7 @@ describe("/api/articles/:article_id/comments", () => {
         expect(message).toBe("Bad Request");
       });
   });
-  ///////////////////////////////////
+
   test("GET 200: Responds with the first page of comments, default to 10 results, and the total number of comments", () => {
     return request(app)
       .get("/api/articles/1/comments")
