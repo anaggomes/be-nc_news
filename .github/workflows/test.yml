@@ -11,7 +11,7 @@ jobs:
     steps:
       - name: Say hello
         run: echo 'hello there!'
-  utils-test:
+  util-tests:
     needs: greeting
     runs-on: ubuntu-latest
     steps:
