@@ -1,13 +1,24 @@
 const db = require("../db/connection");
 
-exports.fetchCommentsByArticleID = (article_id) => {
+exports.fetchCommentsByArticleID = (article_id, limit = 10, p = 0) => {
+  if ((limit && typeof +limit !== "number") || (p && typeof +p !== "number")) {
+    return Promise.reject({ status: 400, message: "Bad Request" });
+  }
+
+  let offset = 0;
+  if (p !== 0) {
+    offset = (p - 1) * limit;
+  }
+
   return db
     .query(
       `
-      SELECT * FROM comments WHERE article_id = $1 ORDER BY created_at DESC;`,
-      [article_id]
+      SELECT * FROM comments WHERE article_id = $1 ORDER BY created_at DESC LIMIT $2 OFFSET $3;;`,
+      [article_id, limit, offset]
     )
     .then(({ rows: comments }) => {
+      if (p > 0 && !comments.length)
+        return Promise.reject({ status: 404, message: "Not Found" });
       return comments;
     });
 };

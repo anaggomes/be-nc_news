@@ -30,7 +30,7 @@ exports.getArticles = (req, res, next) => {
 
   const { topic, sort_by, order_by, limit, p } = req.query;
 
-  return fetchArticlesPagination(topic, sort_by, order_by, limit, p)
+  return fetchArticles(topic, sort_by, order_by, limit, p)
     .then(([articles, { count }]) => {
       res.status(200).send({ articles, total_count: count });
     })
