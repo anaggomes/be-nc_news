@@ -202,9 +202,9 @@ describe("/api/articles", () => {
       .get("/api/articles")
       .expect(200)
       .then(({ body }) => {
-        const { articles } = body;
+        const { articles, total_count } = body;
 
-        expect(articles).toHaveLength(13);
+        expect(total_count).toBe("13");
         articles.forEach((article) => {
           expect(article).toMatchObject({
             article_id: expect.any(Number),
@@ -234,8 +234,9 @@ describe("/api/articles", () => {
       .get("/api/articles")
       .expect(200)
       .then(({ body }) => {
-        const { articles } = body;
-        expect(articles).toHaveLength(13);
+        const { articles, total_count } = body;
+
+        expect(total_count).toBe("13");
         articles.forEach((article) => {
           expect(article).not.toHaveProperty("body");
         });
@@ -246,8 +247,9 @@ describe("/api/articles", () => {
       .get("/api/articles?topic=mitch")
       .expect(200)
       .then(({ body }) => {
-        const { articles } = body;
-        expect(articles).toHaveLength(12);
+        const { articles, total_count } = body;
+
+        expect(total_count).toBe("12");
         articles.forEach((article) => {
           expect(article.topic).toBe("mitch");
         });
@@ -258,11 +260,10 @@ describe("/api/articles", () => {
       .get("/api/articles?topic=paper")
       .expect(200)
       .then(({ body }) => {
-        const { articles } = body;
-        expect(articles).toHaveLength(0);
+        const { articles, total_count } = body;
+        expect(total_count).toBe("0");
       });
   });
-
   test("GET 200: Responds, by default, with an array of the articles sorted by created_at in descending order", () => {
     return request(app)
       .get("/api/articles")
@@ -442,8 +443,7 @@ describe("/api/articles", () => {
         expect(message).toBe("Not Found");
       });
   });
-
-  test("POST 400: Responds with an error if the posted comment does not have the correct property names", () => {
+  test("POST 400: Responds with an error if the posted article does not have the correct property names", () => {
     const requestBody = {
       author: "icellusedkars",
       title: "Text from title...",
@@ -459,15 +459,94 @@ describe("/api/articles", () => {
         expect(message).toBe("Bad Request");
       });
   });
-  test("POST 400: Responds with an error if the posted comment does not have all properties required", () => {
+  test("POST 400: Responds with an error if the posted article does not have all properties required", () => {
     const requestBody = {
       author: "icellusedkars",
       title: "Text from title...",
-      comment: "Text from body...",
+      body: "Text from body...",
     };
     return request(app)
       .post("/api/articles")
       .send(requestBody)
+      .expect(400)
+      .then(({ body }) => {
+        const { message } = body;
+        expect(message).toBe("Bad Request");
+      });
+  });
+  test("GET 200: Responds with the first page of articles, default to 10 results, and the total number of articles", () => {
+    return request(app)
+      .get("/api/articles?topic=mitch")
+      .expect(200)
+      .then(({ body }) => {
+        const { articles, total_count } = body;
+
+        expect(total_count).toBe("12");
+        expect(articles).toHaveLength(10);
+      });
+  });
+  test("GET 200: Responds with the first page of articles containing the number of articles passed in the query", () => {
+    return request(app)
+      .get("/api/articles?limit=5")
+      .expect(200)
+      .then(({ body }) => {
+        const { articles, total_count } = body;
+        expect(total_count).toBe("13");
+        expect(articles).toHaveLength(5);
+      });
+  });
+  test("GET 200: Responds with the second page of articles when passed the page number", () => {
+    return request(app)
+      .get("/api/articles?p=2")
+      .expect(200)
+      .then(({ body }) => {
+        const { articles, total_count } = body;
+        expect(total_count).toBe("13");
+        expect(articles).toHaveLength(3);
+      });
+  });
+  test("GET 200: Responds with the requested page of articles when passed a page number and a limit number", () => {
+    return request(app)
+      .get("/api/articles?p=2&limit=5")
+      .expect(200)
+      .then(({ body }) => {
+        const { articles, total_count } = body;
+        expect(total_count).toBe("13");
+        expect(articles).toHaveLength(5);
+      });
+  });
+  test("GET 200: Responds with the all the articles when limit number is higher than the number or articles for thar request", () => {
+    return request(app)
+      .get("/api/articles?limit=20")
+      .expect(200)
+      .then(({ body }) => {
+        const { articles, total_count } = body;
+
+        expect(total_count).toBe("13");
+        expect(articles).toHaveLength(13);
+      });
+  });
+  test("GET 404: Responds with an error when the requested page of articles does not have any results", () => {
+    return request(app)
+      .get("/api/articles?p=3")
+      .expect(404)
+      .then(({ body }) => {
+        const { message } = body;
+        expect(message).toBe("Not Found");
+      });
+  });
+  test("GET 400: Responds with an error when the request is incomplete", () => {
+    return request(app)
+      .get("/api/articles?limit=&p=2")
+      .expect(400)
+      .then(({ body }) => {
+        const { message } = body;
+        expect(message).toBe("Bad Request");
+      });
+  });
+  test("GET 400: Responds with an error when the request value for limit or p is of incorrect type", () => {
+    return request(app)
+      .get("/api/articles?p=ten")
       .expect(400)
       .then(({ body }) => {
         const { message } = body;
