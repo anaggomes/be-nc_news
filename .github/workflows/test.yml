@@ -12,6 +12,7 @@ jobs:
       - name: Say hello
         run: echo 'hello there!'
   utils-test:
+    needs: greeting
     runs-on: ubuntu-latest
     steps:
       - name: Checkout and clone
