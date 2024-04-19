@@ -10,9 +10,10 @@
     }
   },
   "GET /api/articles": {
-    "description": "serves an array of all articles sorted by date in descending order",
-    "queries": ["author", "topic", "sort_by", "order"],
+    "description": "serves an array of all articles sorted by date in descending order. Default limit set 10 per page.",
+    "queries": ["author", "topic", "sort_by", "order", "p", "limit"],
     "exampleResponse": {
+      "total_count": 13,
       "articles": [
         {
           "article_id": 2,

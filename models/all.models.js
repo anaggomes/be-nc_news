@@ -7,6 +7,7 @@ exports.checkExists = (table, column, value) => {
     if (dbOutput.length === 0) {
       return Promise.reject({ status: 404, message: "Not Found" });
     }
+
     return [];
   });
 };

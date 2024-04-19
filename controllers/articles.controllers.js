@@ -5,8 +5,8 @@ const {
   updateArticleByIdVotes,
   checkArticleExists,
   insertArticle,
+  fetchArticlesPagination,
 } = require("../models/articles.models");
-const { checkTopicExists } = require("../models/topics.models");
 
 exports.getArticleById = (req, res, next) => {
   const { article_id } = req.params;
@@ -20,7 +20,7 @@ exports.getArticleById = (req, res, next) => {
 
 exports.getArticles = (req, res, next) => {
   const queries = Object.keys(req.query);
-  const validQueries = ["sort_by", "order_by", "topic"];
+  const validQueries = ["sort_by", "order_by", "topic", "limit", "p"];
 
   queries.forEach((query) => {
     if (queries.length && !validQueries.includes(query)) {
@@ -28,11 +28,11 @@ exports.getArticles = (req, res, next) => {
     }
   });
 
-  const { topic, sort_by, order_by } = req.query;
+  const { topic, sort_by, order_by, limit, p } = req.query;
 
-  return fetchArticles(topic, sort_by, order_by)
-    .then((articles) => {
-      res.status(200).send({ articles });
+  return fetchArticlesPagination(topic, sort_by, order_by, limit, p)
+    .then(([articles, { count }]) => {
+      res.status(200).send({ articles, total_count: count });
     })
     .catch(next);
 };
