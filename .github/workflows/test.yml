@@ -29,6 +29,8 @@ jobs:
 
       - name: Setup PostgreSQL
         uses: Harmon758/postgresql-action@v1.0.0
+        with:
+          postgresql version: "16.2"
       - name: create db
         run: npm run setup-dbs
       - name: run tests
