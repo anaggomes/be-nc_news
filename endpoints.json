@@ -130,6 +130,10 @@
       }
     }
   },
+  "DELETE /api/articles/:article_id": {
+    "description": "deletes the article and the corresponding comments",
+    "queries": []
+  },
   "GET /api/users": {
     "description": "serves an array of all users",
     "queries": [],

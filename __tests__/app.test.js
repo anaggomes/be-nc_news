@@ -254,6 +254,27 @@ describe("/api/articles/:article_id", () => {
         expect(message).toBe("Bad Request");
       });
   });
+  test("DELETE 204: Deletes the article_id and the corresponding comments", () => {
+    return request(app).delete("/api/articles/1").expect(204);
+  });
+  test("DELETE 404: Responds with an error when article_id does not exist in the database", () => {
+    return request(app)
+      .delete("/api/articles/200")
+      .expect(404)
+      .then(({ body }) => {
+        const { message } = body;
+        expect(message).toBe("Not Found");
+      });
+  });
+  test("DELETE 404: Responds with an error when article_id is of invalid datatype", () => {
+    return request(app)
+      .delete("/api/articles/two")
+      .expect(400)
+      .then(({ body }) => {
+        const { message } = body;
+        expect(message).toBe("Bad Request");
+      });
+  });
 });
 
 describe("/api/articles", () => {
