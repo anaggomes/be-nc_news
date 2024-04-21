@@ -41,8 +41,11 @@ jobs:
           port: 5432
           id: postgres
 
+      - name: connect to server
+        run: psql -p 5432
+
       - name: create db
-        run: sudo npm run setup-dbs
+        run: npm run setup-dbs
 
       - name: run tests
         run: npm run test app.test
