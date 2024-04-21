@@ -44,9 +44,6 @@ jobs:
       - name: psql start
         run: sudo service postgresql start
 
-      - name: something
-        run: sudo su - postgres
-
       - name: create db
         run: psql -f ./db/setup.sql
 
