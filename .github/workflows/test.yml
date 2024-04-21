@@ -35,6 +35,8 @@ jobs:
         uses: ikalnytskyi/action-setup-postgres@v5
 
         with:
+          username: ci
+          password: password
           database: test
           port: 34837
           id: postgres
