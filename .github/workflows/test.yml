@@ -34,15 +34,8 @@ jobs:
       - name: Setup PostgreSQL
         uses: Harmon758/postgresql-action@v1.0.0
 
-        with:
-          username: ci
-          password: password
-          database: test
-          port: 5432
-          id: postgres
-
       - name: psql start
-        run: sudo service postgresql start
+        run: sudo service postgresql start || true
 
       - name: create db
         run: npm run setup-dbs
