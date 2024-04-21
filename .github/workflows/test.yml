@@ -25,9 +25,11 @@ jobs:
         uses: Harmon758/postgresql-action@v1
         with:
           postgresql db: "nc_news_test"
+          postgresql user: "test_user"
+          postgresql password: "test_password"
 
       - name: Install dependencies
         run: npm ci
 
       - name: test
-        run: PGDATABASE=nc_news_test npm test
+        run: PGDATABASE=nc_news_test PGUSER=test_user PGPASSWORD=test_password npm test
