@@ -24,14 +24,33 @@ jobs:
     steps:
       - name: Checkout and clone
         uses: actions/checkout@v4.1.1
+
+      - name: Setup Node.js environment
+        uses: actions/setup-node@v4.0.2
+
       - name: Install dependencies
         run: npm ci
 
-      - name: Setup PostgreSQL
-        uses: Harmon758/postgresql-action@v1.0.0
+      - name: Setup PostgreSQL for Linux/macOS/Windows
+        uses: ikalnytskyi/action-setup-postgres@v5
+
         with:
-          postgresql version: "16.2"
+          username: ci
+          password: sw0rdfish
+          database: test
+          port: 34837
+          id: postgres
+
+      - run: pytest -vv tests/
+        env:
+          CONNECTION_STR: ${{ steps.postgres.outputs.connection-uri }}
+
+      - run: pytest -vv tests/
+        env:
+          CONNECTION_STR: service=${{ steps.postgres.outputs.service-name }}
+
       - name: create db
         run: npm run setup-dbs
+
       - name: run tests
         run: npm run test app.test
