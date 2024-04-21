@@ -1,6 +1,7 @@
 name: Test
 
 on: [push]
+
 jobs:
   util-tests:
     runs-on: ubuntu-latest
@@ -33,3 +34,11 @@ jobs:
 
       - name: test
         run: PGDATABASE=nc_news_test PGUSER=test_user PGPASSWORD=test_password npm test
+
+  deploy:
+    runs-on: ubunto latest
+    needs: app-tests
+    if: github.ref == 'refs/heads/main'
+    env:
+      deploy_url: ${{ secrets.RENDER_DEPLOY_HOOK_URL }}
+      run: curl "$deploy_url"
