@@ -38,7 +38,7 @@ jobs:
           username: ci
           password: password
           database: test
-          port: 34837
+          port: 5432
           id: postgres
 
       - name: create db
