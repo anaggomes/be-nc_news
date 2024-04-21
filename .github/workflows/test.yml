@@ -45,7 +45,7 @@ jobs:
         run: sudo service postgresql start
 
       - name: create db
-        run: psql -f ./db/setup.sql
+        run: npm run setup-dbs
 
       - name: run tests
         run: npm run test app.test
