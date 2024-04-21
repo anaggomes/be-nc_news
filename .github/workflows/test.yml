@@ -42,7 +42,7 @@ jobs:
           id: postgres
 
       - name: create db
-        run: npm run setup-dbs
+        run: sudo npm run setup-dbs
 
       - name: run tests
         run: npm run test app.test
