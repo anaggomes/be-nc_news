@@ -41,8 +41,8 @@ jobs:
           port: 5432
           id: postgres
 
-      - name: connect to server
-        run: psql -p 5432
+      - name: psql status
+        run: sudo systemctl status postgresql
 
       - name: create db
         run: npm run setup-dbs
