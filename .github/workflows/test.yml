@@ -24,7 +24,7 @@ jobs:
       - name: Setup PostgreSQL
         uses: Harmon758/postgresql-action@v1
         with:
-          postgresql db: "my_db"
+          postgresql db: "nc_news_test"
           postgresql user: "test_user"
           postgresql password: "test_password"
 
@@ -33,9 +33,5 @@ jobs:
 
       - name: psql start
         run: sudo service postgresql start || true
-
-      - name: create db
-        run: npm run setup-dbs
-
-      - name: run tests
-        run: npm run test app.test
+      - name: test
+        run: PGDATABASE=nc_news_test PGUSER=test_user PGPASSWORD=test_password npm t
