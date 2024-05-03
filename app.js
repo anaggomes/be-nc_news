@@ -12,8 +12,10 @@ const topicsRouter = require("./routes/topics-router.js");
 const articlesRouter = require("./routes/articles-router.js");
 const commentsRouter = require("./routes/comments-router.js");
 const usersRouter = require("./routes/users-router.js");
+const cors = require("cors");
 const app = express();
 
+app.use(cors());
 app.use(express.json());
 
 app.use("/api/topics", topicsRouter);

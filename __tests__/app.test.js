@@ -5,12 +5,9 @@ const seed = require("../db/seeds/seed");
 const data = require("../db/data/test-data/index");
 const endpointsFile = require("../endpoints.json");
 
-afterAll(() => {
-  return db.end();
-});
-beforeEach(() => {
-  return seed(data);
-});
+afterAll(() => db.end());
+
+beforeEach(() => seed(data));
 
 describe("/api/topics", () => {
   test("GET 200: Responds with an array with all the topics", () => {
@@ -663,7 +660,6 @@ describe("/api/articles/:article_id/comments", () => {
       .expect(200)
       .then(({ body }) => {
         const { comments } = body;
-
         expect(comments).toBeSortedBy("created_at", { descending: true });
       });
   });
