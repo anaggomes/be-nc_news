@@ -21,7 +21,8 @@ exports.fetchArticles = (
   sort_by = "created_at",
   order_by = "desc",
   limit = 10,
-  p = 0
+  p = 0,
+  author
 ) => {
   const validOrderBys = ["asc", "desc"];
   const validSortBys = [
@@ -50,6 +51,13 @@ exports.fetchArticles = (
     query.push(topic);
     countQuery.push(topic);
   }
+  if (author) {
+    psqlString += `WHERE articles.author = $${query.length + 1} `;
+    console.log(`WHERE author = $${query.length + 1} `);
+    countPQSLString += `WHERE articles.author = $${query.length + 1} `;
+    query.push(author);
+    countQuery.push(author);
+  }
 
   psqlString += `GROUP BY articles.article_id ORDER BY articles.${sort_by} ${order_by} `;
 
@@ -60,13 +68,9 @@ exports.fetchArticles = (
   if (p !== 0) {
     offset = (p - 1) * limit;
   }
-  query.push(limit, offset);
 
-  if (topic) {
-    psqlString += `LIMIT $2 OFFSET $3;`;
-  } else {
-    psqlString += `LIMIT $1 OFFSET $2;`;
-  }
+  psqlString += `LIMIT $${query.length + 1} OFFSET $${query.length + 2};`;
+  query.push(limit, offset);
 
   return Promise.all([
     db.query(psqlString, query),

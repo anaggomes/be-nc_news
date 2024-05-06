@@ -320,7 +320,7 @@ describe("/api/articles", () => {
         });
       });
   });
-  test("GET 200: Responds with an array of the articles filtered by the query value", () => {
+  test("GET 200: Responds with an array of the articles filtered by the query value (topic)", () => {
     return request(app)
       .get("/api/articles?topic=mitch")
       .expect(200)
@@ -330,6 +330,18 @@ describe("/api/articles", () => {
         expect(total_count).toBe("12");
         articles.forEach((article) => {
           expect(article.topic).toBe("mitch");
+        });
+      });
+  });
+  test("GET 200: Responds with an array of the articles filtered by the query value (author)", () => {
+    return request(app)
+      .get("/api/articles?author=icellusedkars")
+      .expect(200)
+      .then(({ body }) => {
+        const { articles, total_count } = body;
+        expect(total_count).toBe("6");
+        articles.forEach((article) => {
+          expect(article.author).toBe("icellusedkars");
         });
       });
   });

@@ -21,7 +21,7 @@ exports.getArticleById = (req, res, next) => {
 
 exports.getArticles = (req, res, next) => {
   const queries = Object.keys(req.query);
-  const validQueries = ["sort_by", "order_by", "topic", "limit", "p"];
+  const validQueries = ["sort_by", "order_by", "topic", "limit", "p", "author"];
 
   queries.forEach((query) => {
     if (queries.length && !validQueries.includes(query)) {
@@ -29,9 +29,9 @@ exports.getArticles = (req, res, next) => {
     }
   });
 
-  const { topic, sort_by, order_by, limit, p } = req.query;
+  const { topic, sort_by, order_by, limit, p, author } = req.query;
 
-  return fetchArticles(topic, sort_by, order_by, limit, p)
+  return fetchArticles(topic, sort_by, order_by, limit, p, author)
     .then(([articles, { count }]) => {
       res.status(200).send({ articles, total_count: count });
     })
