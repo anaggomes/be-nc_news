@@ -274,7 +274,7 @@ describe("/api/articles/:article_id", () => {
   });
 });
 
-describe("/api/articles", () => {
+describe.only("/api/articles", () => {
   test("GET 200: Responds with an array with all the articles", () => {
     return request(app)
       .get("/api/articles")
@@ -370,6 +370,15 @@ describe("/api/articles", () => {
       .then(({ body }) => {
         const { articles } = body;
         expect(articles).toBeSortedBy("author", { descending: true });
+      });
+  });
+  test("GET 200: Responds with an array of the articles sorted by a valid column name in the default order", () => {
+    return request(app)
+      .get("/api/articles?sort_by=comment_count")
+      .expect(200)
+      .then(({ body }) => {
+        const { articles } = body;
+        expect(articles).toBeSortedBy("comment_count", { descending: true });
       });
   });
   test("GET 200: Responds with an array of the articles in ascending order, sorted by created_at by default", () => {

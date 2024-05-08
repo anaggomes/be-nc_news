@@ -33,6 +33,7 @@ exports.fetchArticles = (
     "created_at",
     "votes",
     "article_img_url",
+    "comment_count",
   ];
 
   if (!validSortBys.includes(sort_by) || !validOrderBys.includes(order_by)) {
@@ -53,13 +54,13 @@ exports.fetchArticles = (
   }
   if (author) {
     psqlString += `WHERE articles.author = $${query.length + 1} `;
-    console.log(`WHERE author = $${query.length + 1} `);
+
     countPQSLString += `WHERE articles.author = $${query.length + 1} `;
     query.push(author);
     countQuery.push(author);
   }
 
-  psqlString += `GROUP BY articles.article_id ORDER BY articles.${sort_by} ${order_by} `;
+  psqlString += `GROUP BY articles.article_id ORDER BY ${sort_by} ${order_by} `;
 
   if ((limit && typeof +limit !== "number") || (p && typeof +p !== "number")) {
     return Promise.reject({ status: 400, message: "Bad Request" });
