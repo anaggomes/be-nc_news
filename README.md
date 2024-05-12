@@ -2,7 +2,7 @@
 
 Welcome to my backend project!
 
-This is the RESTful API for Northcoders News, a Reddit-like application, developed using Node.js and PostgreSQL. The purpose of this project is to provide a platform where users can share articles, comment on them, and vote for their favorites.
+This is the RESTful API for Northcoders News, a Reddit-like application, developed using Node.js and PostgreSQL. The purpose of this project is to provide a platform where users can share articles, comment on them, and vote for their favourites.
 
 The hosted version of this project can be found on https://nc-news-dkoj.onrender.com
 
@@ -22,10 +22,13 @@ Before running the server, make sure you have the following installed on your ma
 
 ### Installation
 
-1. Fork this repository
-2. Clone the forked repository
+1. Clone the repository
 
    `git clone <repository-url>`
+
+2. Navigate into the project directory:
+
+   `cd be-nc-news`
 
 3. Create two .env files:
 
